@@ -1,10 +1,10 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
 import connectDB from './config/db';
-import authRoutes from './routes/Auth/AuthRoute';
-import taskRoutes from './routes/Task/TaskRoute';
-import categoryRoute from './routes/Category/CategoryRoute';
-import userRoutes from './routes/User/UserRoutes';
+import authRoutes from './routes/AuthRoute';
+import taskRoutes from './routes/TaskRoute';
+import categoryRoute from './routes/CategoryRoute';
+import userRoutes from './routes/UserRoutes';
 
 dotenv.config();
 connectDB();

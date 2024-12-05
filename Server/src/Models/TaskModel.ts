@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import { ICategory } from '../Category/Category';
-import { IUser } from '../User/User';
+import { ICategory } from './CategoryModel';
+import { IUser } from './UserModel';
 
 export interface ITask extends Document {
   title: string;

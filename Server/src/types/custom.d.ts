@@ -1,4 +1,4 @@
-import { IUser } from "../Models/User/User";
+import { IUser } from "../Models/UserModel";
 
 declare namespace Express {
   export interface Request {

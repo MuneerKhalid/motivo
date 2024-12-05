@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Category from '../../Models/Category/Category';
-import Task from '../../Models/Task/Task';
+import Category from '../Models/CategoryModel';
+import Task from '../Models/TaskModel';
 
 export const createCategory = async (req: Request, res: Response) => {
   try {

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import Task from '../../Models/Task/Task';
-import User from '../../Models/User/User';
+import Task from '../Models/TaskModel';
+import User from '../Models/UserModel';
 
 export const createTask = async (req: Request, res: Response): Promise<void> => {
   try {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import User from "../../Models/User/User";
-import Task from "../../Models/Task/Task";
+import User from "../Models/UserModel";
+import Task from "../Models/TaskModel";
 
 
 export const getAllUsers = async (

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import Category from '../Models/CategoryModel';
 import Task from '../Models/TaskModel';
+import User from '../Models/UserModel';
 
 export const createCategory = async (req: Request, res: Response) => {
   try {
@@ -14,6 +15,7 @@ export const createCategory = async (req: Request, res: Response) => {
 
     const category = new Category({ name, user: userId });
     await category.save();
+    await User.findByIdAndUpdate(userId, { $push: { categories: category._id } });
 
     res.status(201).json(category);
   } catch (error) {
@@ -25,7 +27,7 @@ export const getCategoriesBySignedUser = async (req: Request, res: Response) => 
   try {
     const userId = (req as any).user.id;
 
-    const categories = await Category.find({ user: userId });
+    const categories = await Category.find({ user: userId }).populate('user', 'name');
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -57,7 +59,8 @@ export const updateCategory = async (req: Request, res: Response) => {
     const { name } = req.body;
 
     if (!name) {
-      return res.status(400).json({ message: 'Category name is required.' });
+      res.status(400).json({ message: 'Category name is required.' });
+      return;
     }
 
     const category = await Category.findOneAndUpdate(
@@ -67,7 +70,8 @@ export const updateCategory = async (req: Request, res: Response) => {
     );
 
     if (!category) {
-      return res.status(404).json({ message: 'Category not found or not associated with the user.' });
+      res.status(404).json({ message: 'Category not found or not associated with the user.' });
+      return;
     }
 
     res.status(200).json(category);
@@ -84,7 +88,8 @@ export const deleteCategory = async (req: Request, res: Response) => {
     const category = await Category.findOneAndDelete({ _id: categoryId, user: userId });
 
     if (!category) {
-      return res.status(404).json({ message: 'Category not found or not associated with the user.' });
+      res.status(404).json({ message: 'Category not found or not associated with the user.' });
+      return;
     }
 
     await Task.updateMany({ category: categoryId }, { $unset: { category: "" } });
@@ -92,5 +97,39 @@ export const deleteCategory = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Category deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const getAllCategories = async (req: Request, res: Response) => {
+  try {
+    const categories = await Category.find();
+
+    if (!categories || categories.length === 0) {
+      res.status(404).json({ message: 'No Categories found.' });
+      return;
+    }
+
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error', error });
+  }
+};
+
+export const getCategorieById = async (req: Request, res: Response) => {
+  try {
+    const { categoryId } = req.params;
+
+    const category = await Category.findOne({ _id: categoryId })
+
+    if (!category) {
+      res.status(404).json({ message: 'No Categories found.' });
+      return;
+    }
+
+    res.status(200).json(category);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error', error });
   }
 };

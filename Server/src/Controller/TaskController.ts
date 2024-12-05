@@ -4,7 +4,7 @@ import User from '../Models/UserModel';
 
 export const createTask = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { title, description, category } = req.body;
+    const { title, description, category, status, dueDate, priority } = req.body;
     const userId = (req as any).user.id;
 
     if (!title || !category || !userId) {
@@ -17,6 +17,9 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
       description,
       category,
       user: userId,
+      status: status || 'pending',
+      dueDate,
+      priority: priority || 'medium',
     });
 
     await task.save();
@@ -33,7 +36,9 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
   try {
     const userId = (req as any).user.id;
 
-    const tasks = await Task.find({ user: userId }).populate('category', 'name');
+    const tasks = await Task.find({ user: userId })
+      .populate('category', 'name')
+      .sort({ dueDate: 1, priority: -1 });
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
@@ -59,11 +64,11 @@ export const getTaskById = async (req: Request, res: Response): Promise<void> =>
 export const updateTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const { taskId } = req.params;
-    const { title, description, category } = req.body;
+    const { title, description, category, status, dueDate, priority } = req.body;
 
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
-      { title, description, category },
+      { title, description, category, status, dueDate, priority },
       { new: true }
     ).populate('category', 'name');
 
@@ -99,6 +104,38 @@ export const deleteTask = async (req: Request, res: Response): Promise<void> => 
     await User.findByIdAndUpdate(userId, { $pull: { tasks: taskId } });
 
     res.status(200).json({ message: 'Task deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const getAllTasks = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const tasks = await Task.find()
+      .populate('category', 'name')
+      .populate('user', 'name')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const getTaskByIdTest = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { taskId } = req.params;
+
+    const task = await Task.findById(taskId)
+      .populate('category', 'name')
+      .populate('user', 'name'); 
+
+    if (!task) {
+      res.status(404).json({ message: 'Task not found' });
+      return;
+    }
+
+    res.status(200).json(task);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });
   }

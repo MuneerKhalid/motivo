@@ -5,6 +5,7 @@ export interface IUser extends Document {
   name: string;
   password: string;
   tasks: mongoose.Types.ObjectId[];
+  categories: mongoose.Types.ObjectId[];
   comparePassword(enteredPassword: string): Promise<boolean>;
   _id: string;
 }
@@ -14,6 +15,7 @@ const UserSchema: Schema = new Schema(
     name: { type: String, required: true },
     password: { type: String, required: true },
     tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }]
   },
   { timestamps: true }
 );

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../Models/UserModel";
 import Task from "../Models/TaskModel";
+import Category from "../Models/CategoryModel";
 
 
 export const getAllUsers = async (
@@ -12,13 +13,14 @@ export const getAllUsers = async (
       .select("-password")
       .populate({
         path: "tasks",
-        select: "title description category",
+        select: "title description category status priority dueDate ",
         populate: {
           path: "category",
           select: "name",
         },
-      });
-
+      })
+      .populate('categories', 'name');
+      
     if (!users || users.length === 0) {
       res.status(404).json({ message: "No users found" });
       return;
@@ -126,10 +128,9 @@ export const deleteUser = async (
   try {
     const { userId } = req.params;
 
-    // Delete all tasks associated with the user
     await Task.deleteMany({ user: userId });
+    await Category.deleteMany({ user: userId });
 
-    // Delete user
     const deletedUser = await User.findByIdAndDelete(userId);
 
     if (!deletedUser) {

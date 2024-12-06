@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors'; // Import cors middleware
 import connectDB from './config/db';
 import authRoutes from './routes/AuthRoute';
 import taskRoutes from './routes/TaskRoute';
@@ -10,6 +11,13 @@ dotenv.config();
 connectDB();
 
 const app: Application = express();
+
+// Configure CORS middleware
+app.use(cors({
+  origin: 'http://localhost:5173', // Frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+  credentials: true, // Allow cookies to be sent
+}));
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);

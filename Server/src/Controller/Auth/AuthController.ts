@@ -8,20 +8,20 @@ export const registerUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { name, password } = req.body;
+    const { email, name, password } = req.body;
 
-    if (!name || !password) {
+    if (!email || !name || !password) {
       res.status(400).json({ message: "All fields are required" });
       return;
     }
 
-    const existingUser = await User.findOne({ name });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       res.status(400).json({ message: "User already exists" });
       return;
     }
 
-    const user: IUser = await User.create({ name, password });
+    const user: IUser = await User.create({ email,name, password });
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
       expiresIn: "1h",
     });

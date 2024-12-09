@@ -1,0 +1,8 @@
+.light {
+  /* background-image: url("/images/bg-desktop-light.jpg"); */
+  background-color: #fafafa;
+}
+.dark {
+  /* background-image: url("/images/.bg-desktop-dark.jpg"); */
+  background-color: rgba(24, 24, 36, 1);
+}

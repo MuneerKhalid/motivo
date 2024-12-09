@@ -1,6 +1,4 @@
-import * as React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import Box from '@mui/material/Box';
+import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -25,7 +23,6 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 export default function SignInCard() {
-  const [loading, setLoading] = React.useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = () => {

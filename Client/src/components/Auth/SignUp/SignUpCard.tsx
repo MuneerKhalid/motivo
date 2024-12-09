@@ -1,13 +1,11 @@
 import * as React from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MuiCard from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -65,7 +63,7 @@ export default function SignUpCard() {
       alert(`SignUp successful: ${response.data.message}`);
       localStorage.setItem('token', response.data.token);
 
-      navigate('/dashboard');
+      navigate('/home');
     } catch (error: any) {
       alert(`Sign Up failed: ${error.response?.data.message || error.message}`);
     } finally {

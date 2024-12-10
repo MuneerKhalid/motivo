@@ -27,7 +27,7 @@ export default function SignInCard() {
 
   const handleSignOut = () => {
     localStorage.removeItem('token');
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -39,10 +39,7 @@ export default function SignInCard() {
       >
         Dashboard
       </Typography>
-
-      {/* Your other dashboard content here */}
-
-      {/* Sign Out Button */}
+      
       <Button
         variant="outlined"
         color="secondary"

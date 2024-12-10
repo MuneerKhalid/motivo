@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { extendTheme, styled } from "@mui/material/styles";
+import React from "react";
+import { extendTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import DescriptionIcon from "@mui/icons-material/Description";
-import LayersIcon from "@mui/icons-material/Layers";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import { Fab, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 
 import TaskList from "../Task/TaskList";
 
@@ -28,12 +26,13 @@ const NAVIGATION: Navigation = [
         title: "Tasks",
         icon: <DashboardIcon />,
       },
+
+      {
+        segment: "category",
+        title: "Categories",
+        icon: <ShoppingCartIcon />,
+      },
     ],
-  },
-  {
-    segment: "orders",
-    title: "Orders",
-    icon: <ShoppingCartIcon />,
   },
   {
     kind: "divider",
@@ -58,11 +57,6 @@ const NAVIGATION: Navigation = [
         icon: <DescriptionIcon />,
       },
     ],
-  },
-  {
-    segment: "integrations",
-    title: "Integrations",
-    icon: <LayersIcon />,
   },
 ];
 
@@ -94,7 +88,7 @@ function useDemoRouter(initialPath: string): Router {
   return router;
 }
 
-export default function DashboardLayoutBasic(props: any) {
+export default function DashboardLayoutBasic() {
   const router = useDemoRouter("/dashboard/tasks");
 
   return (

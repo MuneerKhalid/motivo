@@ -1,4 +1,3 @@
-// src/components/TaskList.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { List, Typography, IconButton, Box } from "@mui/material";
@@ -41,23 +40,27 @@ const TaskList: React.FC = () => {
     return <Typography>Loading tasks...</Typography>;
   }
 
-  if (tasks.length === 0) {
-    return <Typography>No tasks available</Typography>;
-  }
-
   return (
     <div>
       <Typography variant="h6">Your Tasks</Typography>
 
       <List>
-        {tasks.map((task) => (
-          <TaskItem key={task._id} task={task} setTasks={setTasks} />
-        ))}
+        {tasks.length > 0 ? (
+          tasks.map((task) => (
+            <TaskItem key={task._id} task={task} setTasks={setTasks} />
+          ))
+        ) : (
+          <Typography>No tasks available</Typography>
+        )}
       </List>
 
       <Box
         display="flex"
         alignItems="center"
+        bgcolor="background.paper"
+        p={2}
+        borderRadius="50%"
+        // boxShadow={3}
       >
         <IconButton color="primary" onClick={handleOpenModal}>
           <AddIcon />

@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
 import Task from '../Models/TaskModel';
-import User from '../Models/UserModel';
+import User, { IUser } from '../Models/UserModel';
 
+interface IRequest extends Request  {
+  user: IUser
+}
 export const createTask = async (req: Request, res: Response): Promise<void> => {
   try {
     const { title, description, category, status, dueDate, priority } = req.body;

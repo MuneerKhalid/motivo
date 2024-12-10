@@ -1,4 +1,3 @@
-// src/components/TaskForm.tsx
 import React, { useState } from "react";
 import {
   TextField,
@@ -8,7 +7,11 @@ import {
   InputLabel,
   FormControl,
   SelectChangeEvent,
+  Alert,
 } from "@mui/material";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import axios from "axios";
 import CategorySelect from "./CategorySelect";
 
@@ -18,11 +21,18 @@ interface TaskFormProps {
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({ handleClose, setTasks }) => {
-  const [newTask, setNewTask] = useState({
+  const [newTask, setNewTask] = useState<{
+    title: string;
+    description: string;
+    priority: string;
+    category: string;
+    dueDate: Date | null;
+  }>({
     title: "",
     description: "",
     priority: "medium",
     category: "",
+    dueDate: null,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,8 +50,21 @@ const TaskForm: React.FC<TaskFormProps> = ({ handleClose, setTasks }) => {
     }));
   };
 
+  const handleDueDateChange = (date: Date | null) => {
+    setNewTask((prevTask) => ({
+      ...prevTask,
+      dueDate: date,
+    }));
+  };
+
   const handleAddTask = async () => {
     try {
+      if (!newTask.title || !newTask.description) {
+        console.error("Title and description are required");
+        <Alert severity="error">This is an error Alert.</Alert>
+        return;
+      }
+
       const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:5000/api/task/create",
@@ -63,6 +86,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ handleClose, setTasks }) => {
     <form>
       <TextField
         label="Task Title"
+        variant="filled"
         fullWidth
         name="title"
         value={newTask.title}
@@ -71,13 +95,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ handleClose, setTasks }) => {
       />
       <TextField
         label="Description"
+        variant="filled"
         fullWidth
         name="description"
         value={newTask.description}
         onChange={handleInputChange}
         margin="normal"
       />
-      <FormControl fullWidth margin="normal">
+      <FormControl variant="filled" fullWidth margin="normal">
         <InputLabel>Priority</InputLabel>
         <Select
           label="Priority"
@@ -89,6 +114,14 @@ const TaskForm: React.FC<TaskFormProps> = ({ handleClose, setTasks }) => {
           <MenuItem value="high">High</MenuItem>
         </Select>
       </FormControl>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <DateTimePicker
+          label="Due Date and Time"
+          value={newTask.dueDate}
+          onChange={handleDueDateChange}
+          slotProps={{ textField: { fullWidth: true, margin: "normal" } }}
+        />
+      </LocalizationProvider>
       <CategorySelect
         selectedCategory={newTask.category}
         setCategory={(category) =>

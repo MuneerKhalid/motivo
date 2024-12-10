@@ -6,9 +6,6 @@ import SignUp from "./components/Auth/SignUp/SignUp";
 import DashboardLayoutBasic from "./components/Home/Home";
 
 
-// import Dashboard from "./components/Dashboard/dashboard/Dashboard";
-// import "./App.css";
-
 function App() {
   return (
     <Router>

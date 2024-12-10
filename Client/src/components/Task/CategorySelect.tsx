@@ -1,4 +1,3 @@
-// src/components/CategorySelect.tsx
 import React, { useState, useEffect } from "react";
 import { Select, MenuItem, InputLabel, FormControl, TextField, Button } from "@mui/material";
 import axios from "axios";
@@ -55,7 +54,7 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ selectedCategory, setCa
 
   return (
     <div>
-      <FormControl fullWidth margin="normal">
+      <FormControl variant="filled" fullWidth margin="normal">
         <InputLabel>Category</InputLabel>
         <Select value={selectedCategory} onChange={(e) => setCategory(e.target.value as string)} label="Category">
           {loading ? (
@@ -75,13 +74,14 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ selectedCategory, setCa
         value={newCategory}
         onChange={(e) => setNewCategory(e.target.value)}
         margin="normal"
+        variant="filled"
       />
       <Button
         onClick={handleCreateCategory}
-        color="primary"
+        color="success"
         fullWidth
-        variant="outlined"
         disabled={!newCategory}
+        
       >
         Create Category
       </Button>

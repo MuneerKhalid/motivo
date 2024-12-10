@@ -6,6 +6,7 @@ import authRoutes from './routes/AuthRoute';
 import taskRoutes from './routes/TaskRoute';
 import categoryRoute from './routes/CategoryRoute';
 import userRoutes from './routes/UserRoutes';
+import { protect } from './middleware/AuthMiddleware';
 
 dotenv.config();
 connectDB();
@@ -13,16 +14,16 @@ connectDB();
 const app: Application = express();
 
 app.use(cors({
-  origin: 'http://localhost:5174',
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   credentials: true,
 }));
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
-app.use('/api/task', taskRoutes);
-app.use('/api/category', categoryRoute);
-app.use('/api/user', userRoutes);
+app.use('/api/task', protect, taskRoutes);
+app.use('/api/category', protect, categoryRoute);
+app.use('/api/user', protect, userRoutes);
 
 const PORT: number = parseInt(process.env.PORT as string, 10) || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

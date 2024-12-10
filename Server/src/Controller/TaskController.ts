@@ -7,8 +7,8 @@ export const createTask = async (req: Request, res: Response): Promise<void> => 
     const { title, description, category, status, dueDate, priority } = req.body;
     const userId = (req as any).user.id;
 
-    if (!title || !category || !userId) {
-      res.status(400).json({ message: 'Title, category, and user are required.' });
+    if (!title || !userId) {
+      res.status(400).json({ message: 'Title, and user are required.' });
       return;
     }
 
@@ -79,6 +79,34 @@ export const updateTask = async (req: Request, res: Response): Promise<void> => 
 
     res.status(200).json(updatedTask);
   } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+export const updateTaskStatus = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { taskId } = req.params;
+    const { status } = req.body;
+
+    if (status === undefined) {
+      res.status(400).json({ message: 'Status is required' });
+      return;
+    }
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      taskId,
+      { status },
+      { new: true }
+    ).populate('category', 'name');
+
+    if (!updatedTask) {
+      res.status(404).json({ message: 'Task not found' });
+      return;
+    }
+
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    console.error('Error updating task:', error);
     res.status(500).json({ message: 'Server error', error });
   }
 };

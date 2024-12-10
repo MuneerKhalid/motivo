@@ -13,9 +13,6 @@ const InputArea: React.FC<InputAreaProps> = ({ handleSubmit }) => {
       id="#input"
       className="flex w-full h-16 px-6 my-12 text-lg leading-tight text-gray-700 align-middle bg-white rounded shadow appearance-none dark:bg-slate-800 focus:outline-none focus:shadow-outline"
     >
-      <div>
-        <img src={Circle} alt="LogoCentang" className="mt-5 mr-6" />
-      </div>
 
       <form
         className="flex-1"
@@ -33,6 +30,10 @@ const InputArea: React.FC<InputAreaProps> = ({ handleSubmit }) => {
           placeholder="What to do ?"
         />
       </form>
+
+      <div>
+        <img src={Circle} alt="LogoCentang" className="mt-5 mr-3" />
+      </div>
     </div>
   );
 };

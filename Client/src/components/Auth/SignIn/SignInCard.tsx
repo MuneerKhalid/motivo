@@ -12,6 +12,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import { SitemarkIcon } from './CustomIcons';
+import axiosInstance from '../../../axiosConfig';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -63,7 +64,7 @@ export default function SignInCard() {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:5000/api/auth/login', loginDetails);
+      const response = await axiosInstance.post('/auth/login', loginDetails);
       alert(`Login successful: ${response.data.message}`);
       localStorage.setItem('token', response.data.token); 
 

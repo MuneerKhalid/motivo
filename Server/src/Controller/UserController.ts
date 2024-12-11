@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import User from "../Models/UserModel";
 import Task from "../Models/TaskModel";
 import Category from "../Models/CategoryModel";
-import generateResetToken from "../middleware/JWT_reset_password";
+import generateResetToken from "../middleware/iwtResetPassword";
 import sendEmail from "../config/nodemailer";
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';

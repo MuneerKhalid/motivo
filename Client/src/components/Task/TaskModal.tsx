@@ -7,7 +7,7 @@ interface TaskModalProps {
   open: boolean;
   handleClose: () => void;
   setTasks: React.Dispatch<React.SetStateAction<any[]>>;
-  task: any; // Add task prop to receive the task for editing
+  task?: any; // Add task prop to receive the task for editing
 }
 
 const TaskModal: React.FC<TaskModalProps> = ({ open, handleClose, setTasks, task }) => {

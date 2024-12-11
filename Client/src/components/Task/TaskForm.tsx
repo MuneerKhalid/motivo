@@ -82,13 +82,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ handleClose, setTasks, task }) => {
           throw new Error("Task ID is missing");
         }
 
-        // Update task if it exists
         await axiosInstance.put(`/task/update/${task._id}`, newTask);
         setTasks((prev) =>
           prev.map((t) => (t._id === task._id ? { ...t, ...newTask } : t))
         );
       } else {
-        // Create a new task if no task is provided
         await axiosInstance.post("/task/create", newTask);
         setTasks((prev) => [...prev, newTask]);
       }

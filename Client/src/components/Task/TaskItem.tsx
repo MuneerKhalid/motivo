@@ -5,10 +5,11 @@ import {
   Checkbox,
   IconButton,
   Typography,
+  Snackbar,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import axiosInstance from "../../axiosConfig";
-import TaskModal from "./TaskModal"; // Import the TaskModal component
+import TaskModal from "./TaskModal";
 
 interface TaskItemProps {
   task: any;
@@ -16,29 +17,36 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
-  const [openEditModal, setOpenEditModal] = useState(false); // State to control modal visibility
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState<boolean>(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
 
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const newStatus = event.target.checked ? "completed" : "pending";
     try {
-      await axiosInstance.patch(
-        `/task/updateStatus/${task._id}`,
-        { status: newStatus }
-      );
+      await axiosInstance.patch(`/task/updateStatus/${task._id}`, {
+        status: newStatus,
+      });
       setTasks((prev) =>
         prev.map((t) => (t._id === task._id ? { ...t, status: newStatus } : t))
       );
+      setSnackbarMessage("Status Updated successfully");
+      setOpenSnackbar(true);
     } catch (error) {
       console.error("Error updating task:", error);
     }
   };
 
+  const handleCloseSnackbar = () => setOpenSnackbar(false);
+
   const handleDeleteClick = async () => {
     try {
       await axiosInstance.delete(`/task/delete/${task._id}`);
       setTasks((prev) => prev.filter((t) => t._id !== task._id));
+      setSnackbarMessage("Task Deleted");
+      setOpenSnackbar(true);
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -87,7 +95,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
   };
 
   const handleEditClick = () => {
-    setOpenEditModal(true); // Open the modal when the Edit button is clicked
+    setOpenEditModal(true); 
   };
 
   return (
@@ -103,7 +111,9 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
           secondary={
             <>
               <Typography>{task.description}</Typography>
-              <Typography>Status: {task.status} - Priority: {task.priority}</Typography>
+              <Typography>
+                Status: {task.status} - Priority: {task.priority}
+              </Typography>
               <Typography>
                 {" "}
                 Due Date:{" "}
@@ -112,7 +122,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
             </>
           }
         />
-        <IconButton edge="end" onClick={handleEditClick}>
+        <IconButton edge="start" onClick={handleEditClick}>
           <Edit />
         </IconButton>
         <IconButton edge="end" onClick={handleDeleteClick}>
@@ -120,12 +130,19 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
         </IconButton>
       </ListItem>
 
-      {/* Add Task Modal for editing */}
       <TaskModal
         open={openEditModal}
-        handleClose={() => setOpenEditModal(false)} // Close modal when the close button is clicked
+        handleClose={() => setOpenEditModal(false)}
         setTasks={setTasks}
-        task={task} // Pass the task to edit
+        task={task}
+      />
+
+      <Snackbar
+        open={openSnackbar}
+        message={snackbarMessage}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </>
   );

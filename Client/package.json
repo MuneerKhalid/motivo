@@ -16,10 +16,12 @@
     "@fontsource/roboto": "^5.1.0",
     "@mui/icons-material": "^6.1.10",
     "@mui/material": "^6.1.10",
+    "@mui/system": "^6.2.0",
     "@mui/x-date-pickers": "^7.23.1",
     "@toolpad/core": "^0.10.0",
     "axios": "^1.7.9",
     "date-fns": "^2.30.0",
+    "firebase": "^11.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"

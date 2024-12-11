@@ -2,12 +2,11 @@ import React from "react";
 import { extendTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BarChartIcon from "@mui/icons-material/BarChart";
-import DescriptionIcon from "@mui/icons-material/Description";
 import { AppProvider, Navigation, Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import { Typography } from "@mui/material";
 import TaskList from "../Task/TaskList";
+import CategoriesList from "../Category/Category";
 
 const NAVIGATION: Navigation = [
   { kind: "header", title: "Main items" },
@@ -15,13 +14,9 @@ const NAVIGATION: Navigation = [
   { kind: "divider" },
   { kind: "header", title: "Analytics" },
   {
-    segment: "reports",
-    title: "Reports",
-    icon: <BarChartIcon />,
-    children: [
-      { segment: "sales", title: "Sales", icon: <DescriptionIcon /> },
-      { segment: "traffic", title: "Traffic", icon: <DescriptionIcon /> },
-    ],
+    segment: "category",
+    title: "Category",
+    icon: <BarChartIcon />
   },
 ];
 
@@ -52,7 +47,7 @@ export default function DashboardLayoutBasic() {
           {router.pathname === "/tasks" ? (
             <TaskList />
           ) : (
-            <Typography>Welcome to the {router.pathname.substring(1)} page!</Typography>
+            <CategoriesList />
           )}
         </PageContainer>
       </DashboardLayout>

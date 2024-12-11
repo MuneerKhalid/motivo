@@ -1,7 +1,14 @@
-import React from "react";
-import { ListItem, ListItemText, Checkbox, Typography, IconButton } from "@mui/material";
+import React, { useState } from "react";
+import {
+  ListItem,
+  ListItemText,
+  Checkbox,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
-import axios from "axios";
+import axiosInstance from "../../axiosConfig";
+import TaskModal from "./TaskModal"; // Import the TaskModal component
 
 interface TaskItemProps {
   task: any;
@@ -9,32 +16,32 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
+  const [openEditModal, setOpenEditModal] = useState(false); // State to control modal visibility
 
-  const updateTaskStatus = async (taskId: string, status: string) => {
+  const handleCheckboxChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newStatus = event.target.checked ? "completed" : "pending";
     try {
-      const token = localStorage.getItem("token");
-      await axios.patch(
-        `http://localhost:5000/api/task/updateStatus/${taskId}`,
-        { status },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      await axiosInstance.patch(
+        `/task/updateStatus/${task._id}`,
+        { status: newStatus }
       );
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task._id === taskId ? { ...task, status } : task
-        )
+      setTasks((prev) =>
+        prev.map((t) => (t._id === task._id ? { ...t, status: newStatus } : t))
       );
     } catch (error) {
-      console.error("Error updating task status:", error);
+      console.error("Error updating task:", error);
     }
   };
 
-  const handleCheckboxChange = (taskId: string, checked: boolean) => {
-    const newStatus = checked ? "completed" : "pending";
-    updateTaskStatus(taskId, newStatus);
+  const handleDeleteClick = async () => {
+    try {
+      await axiosInstance.delete(`/task/delete/${task._id}`);
+      setTasks((prev) => prev.filter((t) => t._id !== task._id));
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   };
 
   const calculateTimeLeft = (dueDate: string) => {
@@ -79,28 +86,8 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
     }
   };
 
-  const handleEditClick = (taskId: string) => {
-    // Implement the edit functionality here
-    // For example, open a modal or navigate to an edit page with taskId
-    console.log("Edit task", taskId);
-  };
-
-
-  const handleDeleteClick = async (taskId: string) => {
-    try {
-      const token = localStorage.getItem("token");
-      await axios.delete(
-        `http://localhost:5000/api/task/delete/${taskId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
+  const handleEditClick = () => {
+    setOpenEditModal(true); // Open the modal when the Edit button is clicked
   };
 
   return (
@@ -108,41 +95,38 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, setTasks }) => {
       <ListItem disablePadding>
         <Checkbox
           checked={task.status === "completed"}
-          onChange={(event) =>
-            handleCheckboxChange(task._id, event.target.checked)
-          }
+          onChange={handleCheckboxChange}
           inputProps={{ "aria-label": `Checkbox for task ${task.title}` }}
         />
         <ListItemText
           primary={task.title}
           secondary={
             <>
-              <Typography component="span" variant="body2" color="text.primary">
-                {task.description}
+              <Typography>{task.description}</Typography>
+              <Typography>Status: {task.status} - Priority: {task.priority}</Typography>
+              <Typography>
+                {" "}
+                Due Date:{" "}
+                {task.dueDate ? calculateTimeLeft(task.dueDate) : "No due date"}
               </Typography>
-              <br />
-              Status: {task.status} - Priority: {task.priority}
-              <br />
-              Due Date:{" "}
-              {task.dueDate ? calculateTimeLeft(task.dueDate) : "No due date"}
             </>
           }
         />
-        <IconButton
-          edge="end"
-          aria-label="edit"
-          onClick={() => handleEditClick(task._id)}
-        >
+        <IconButton edge="end" onClick={handleEditClick}>
           <Edit />
         </IconButton>
-        <IconButton
-          edge="end"
-          aria-label="delete"
-          onClick={() => handleDeleteClick(task._id)}
-        >
+        <IconButton edge="end" onClick={handleDeleteClick}>
           <Delete />
         </IconButton>
       </ListItem>
+
+      {/* Add Task Modal for editing */}
+      <TaskModal
+        open={openEditModal}
+        handleClose={() => setOpenEditModal(false)} // Close modal when the close button is clicked
+        setTasks={setTasks}
+        task={task} // Pass the task to edit
+      />
     </>
   );
 };

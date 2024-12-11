@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import Task from '../Models/TaskModel';
 import User, { IUser } from '../Models/UserModel';
+import mongoose from 'mongoose';
+import Category from '../Models/CategoryModel';
 
 interface IRequest extends Request  {
   user: IUser
@@ -69,6 +71,28 @@ export const updateTask = async (req: Request, res: Response): Promise<void> => 
     const { taskId } = req.params;
     const { title, description, category, status, dueDate, priority } = req.body;
 
+    // Validate that category is a valid ObjectId
+    if (category && !mongoose.Types.ObjectId.isValid(category)) {
+      res.status(400).json({ message: "Invalid category ID" });
+      return;
+    }
+
+    // Validate category existence if provided
+    if (category) {
+      const categoryExists = await Category.findById(category);
+      if (!categoryExists) {
+        res.status(400).json({ message: "Category does not exist" });
+        return;
+      }
+    }
+
+    // Validate dueDate format if provided
+    if (dueDate && isNaN(new Date(dueDate).getTime())) {
+      res.status(400).json({ message: "Invalid due date" });
+      return;
+    }
+
+    // Update the task
     const updatedTask = await Task.findByIdAndUpdate(
       taskId,
       { title, description, category, status, dueDate, priority },

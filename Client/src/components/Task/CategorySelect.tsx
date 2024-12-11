@@ -1,29 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Select, MenuItem, InputLabel, FormControl, TextField, Button } from "@mui/material";
-import axios from "axios";
+import {
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  TextField,
+  Button,
+  CircularProgress,
+  Snackbar,
+} from "@mui/material";
+import axiosInstance from "../../axiosConfig";
 
 interface CategorySelectProps {
   selectedCategory: string;
   setCategory: (category: string) => void;
 }
 
-const CategorySelect: React.FC<CategorySelectProps> = ({ selectedCategory, setCategory }) => {
+const CategorySelect: React.FC<CategorySelectProps> = ({
+  selectedCategory,
+  setCategory,
+}) => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [newCategory, setNewCategory] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:5000/api/category/currentUser", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axiosInstance.get("/category/currentUser");
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        setErrorMessage("Failed to load categories.");
       } finally {
         setLoading(false);
       }
@@ -33,22 +43,21 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ selectedCategory, setCa
   }, []);
 
   const handleCreateCategory = async () => {
+    if (!newCategory) return;
+    
+    setCreatingCategory(true);
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:5000/api/category/create",
-        { name: newCategory },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setCategories((prevCategories) => [...prevCategories, response.data]);
-      setCategory(response.data._id); 
-      setNewCategory(""); 
+      const response = await axiosInstance.post("/category/create", {
+        name: newCategory,
+      });
+      setCategories((prevCategories) => [response.data, ...prevCategories]);
+      setCategory(response.data._id);
+      setNewCategory("");
     } catch (error) {
       console.error("Error creating category:", error);
+      setErrorMessage("Failed to create category.");
+    } finally {
+      setCreatingCategory(false);
     }
   };
 
@@ -56,9 +65,15 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ selectedCategory, setCa
     <div>
       <FormControl variant="filled" fullWidth margin="normal">
         <InputLabel>Category</InputLabel>
-        <Select value={selectedCategory} onChange={(e) => setCategory(e.target.value as string)} label="Category">
+        <Select
+          value={selectedCategory}
+          onChange={(e) => setCategory(e.target.value as string)}
+          label="Category"
+        >
           {loading ? (
-            <MenuItem value="">Loading...</MenuItem>
+            <MenuItem value="">
+              <CircularProgress size={24} />
+            </MenuItem>
           ) : (
             categories.map((category) => (
               <MenuItem key={category._id} value={category._id}>
@@ -68,23 +83,33 @@ const CategorySelect: React.FC<CategorySelectProps> = ({ selectedCategory, setCa
           )}
         </Select>
       </FormControl>
+
       <TextField
-        label="Create New Category"
+        label="Enter Category Name"
         fullWidth
         value={newCategory}
         onChange={(e) => setNewCategory(e.target.value)}
         margin="normal"
         variant="filled"
       />
+      
       <Button
         onClick={handleCreateCategory}
         color="success"
         fullWidth
-        disabled={!newCategory}
-        
+        disabled={!newCategory || creatingCategory}
       >
-        Create Category
+        {creatingCategory ? <CircularProgress size={24} /> : "Create Category"}
       </Button>
+
+      {errorMessage && (
+        <Snackbar
+          open={Boolean(errorMessage)}
+          autoHideDuration={6000}
+          onClose={() => setErrorMessage("")}
+          message={errorMessage}
+        />
+      )}
     </div>
   );
 };

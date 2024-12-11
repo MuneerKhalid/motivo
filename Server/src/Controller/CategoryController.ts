@@ -27,7 +27,7 @@ export const getCategoriesBySignedUser = async (req: Request, res: Response) => 
   try {
     const userId = (req as any).user.id;
 
-    const categories = await Category.find({ user: userId }).populate('user', 'name');
+    const categories = await Category.find({ user: userId });
     res.status(200).json(categories);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });

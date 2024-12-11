@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { List, Typography, IconButton, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import TaskItem from "./TaskItem";
 import TaskModal from "./TaskModal";
+import axiosInstance from "../../axiosConfig";
+
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -13,15 +14,7 @@ const TaskList: React.FC = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:5000/api/task/getTasks",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axiosInstance.get(`/task/getTasks`);
         setTasks(response.data);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -29,21 +22,17 @@ const TaskList: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchTasks();
   }, []);
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
 
-  if (loading) {
-    return <Typography>Loading tasks...</Typography>;
-  }
+  if (loading) return <Typography>Loading tasks...</Typography>;
 
   return (
     <div>
       <Typography variant="h6">Your Tasks</Typography>
-
       <List>
         {tasks.length > 0 ? (
           tasks.map((task) => (
@@ -53,24 +42,19 @@ const TaskList: React.FC = () => {
           <Typography>No tasks available</Typography>
         )}
       </List>
-
-      <Box
-        display="flex"
-        alignItems="center"
-        bgcolor="background.paper"
-        p={2}
-        borderRadius="50%"
-        // boxShadow={3}
-      >
+      <Box display="flex" alignItems="center" p={2}>
         <IconButton color="primary" onClick={handleOpenModal}>
           <AddIcon />
         </IconButton>
-        <Typography variant="body1" style={{ marginLeft: 8, color: "lightgray" }}>
+        <Typography variant="body1" style={{ marginLeft: 8, color: "gray" }}>
           Add Task
         </Typography>
       </Box>
-
-      <TaskModal open={openModal} handleClose={handleCloseModal} setTasks={setTasks} />
+      <TaskModal
+        open={openModal}
+        handleClose={handleCloseModal}
+        setTasks={setTasks}
+      />
     </div>
   );
 };

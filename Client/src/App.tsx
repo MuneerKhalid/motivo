@@ -4,7 +4,6 @@ import SignInSide from "./components/Auth/SignIn/SignIn";
 import ProtectedRoute from "./components/Auth/protectedRoute";
 import SignUp from "./components/Auth/SignUp/SignUp";
 import DashboardLayoutBasic from "./components/Home/Home";
-import { CssBaseline, ThemeProvider } from "@mui/material";
 
 
 function App() {

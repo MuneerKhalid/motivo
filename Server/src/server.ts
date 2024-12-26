@@ -29,5 +29,7 @@ app.use('/api/task', protect, taskRoutes);
 app.use('/api/category', protect, categoryRoute);
 app.use('/api/user', protect, userRoutes);
 
+
+
 const PORT: number = parseInt(process.env.PORT as string, 10) || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

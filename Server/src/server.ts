@@ -13,6 +13,8 @@ connectDB();
 
 const app: Application = express();
 
+
+
 app.use(cors({
   origin: ['https://motivo-c7c3c.firebaseapp.com', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
